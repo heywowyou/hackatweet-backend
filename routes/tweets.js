@@ -103,4 +103,60 @@ router.put("/like/:id", async (req, res) => {
   res.json({ result: true, liked: !alreadyLiked });
 });
 
+// Get tweets that contain a specific hashtag
+router.get("/hashtag/:hashtagname", async (req, res) => {
+  const hashtagName = "#" + req.params.hashtagname;
+
+  const tweets = await Tweet.find({ hashtags: hashtagName })
+    .populate("author", ["username", "email"])
+    .populate("likes", ["username"])
+    .sort({ date: -1 });
+
+  if (tweets.length === 0) {
+    return res.json({
+      result: true,
+      tweets: [],
+      message: "No tweets found with this hashtag",
+    });
+  }
+
+  res.json({ result: true, tweets });
+});
+
+// Hashtags routes
+
+// Return a list of hashtags with their count, sorted by frequency
+router.get("/trends", async (req, res) => {
+  const tweets = await Tweet.find({}, "hashtags");
+
+  const countMap = {};
+
+  tweets.forEach((tweet) => {
+    tweet.hashtags.forEach((tag) => {
+      if (!countMap[tag]) {
+        countMap[tag] = 1;
+      } else {
+        countMap[tag]++;
+      }
+    });
+  });
+
+  // Convert object to sorted array
+  const trends = Object.entries(countMap)
+    .map(([hashtag, count]) => ({ hashtag, count }))
+    .sort((a, b) => b.count - a.count);
+
+  res.json({ result: true, trends });
+
+  /*
+  {
+  "result": true,
+  "trends": [
+    { "hashtag": "#hackatweet", "count": 4 },
+    { "hashtag": "#first", "count": 2 }
+  ]
+  } 
+  */
+});
+
 module.exports = router;
