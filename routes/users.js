@@ -41,6 +41,7 @@ router.post("/signup", async (req, res) => {
     token: newUser.token,
     username: newUser.username,
     email: newUser.email,
+    userId: newUser._id,
   });
 });
 
@@ -66,6 +67,7 @@ router.post("/signin", async (req, res) => {
     token: user.token,
     username: user.username,
     email: user.email,
+    userId: user._id,
   });
 });
 
