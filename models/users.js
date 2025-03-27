@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
   createdAt: Date,
   avatar: {
     type: String,
-    default: "http://localhost:3000/oeuf.jpg",
+    default: "/oeuf.jpg",
   },
 });
 
