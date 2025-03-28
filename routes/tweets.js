@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
   }
 
   // Extract hashtags from content
-  const hashtags = content.match(/#\w+/g) || [];
+  const hashtags = (content.match(/#\w+/g) || []).map(tag => tag.toLowerCase());
 
   const newTweet = new Tweet({
     content,
@@ -105,12 +105,16 @@ router.put("/like/:id", async (req, res) => {
 
 // Get tweets that contain a specific hashtag
 router.get("/hashtag/:hashtagname", async (req, res) => {
-  const hashtagName = "#" + req.params.hashtagname;
+  const hashtagName = `#${req.params.hashtagname.toLowerCase()}`;
 
-  const tweets = await Tweet.find({ hashtags: hashtagName })
-    .populate("author", ["username", "email"])
+  const tweets = await Tweet.find({
+    hashtags: hashtagName,
+  })
+    .populate("author", ["username", "email", "avatar"])
     .populate("likes", ["username"])
     .sort({ date: -1 });
+
+
 
   if (tweets.length === 0) {
     return res.json({
