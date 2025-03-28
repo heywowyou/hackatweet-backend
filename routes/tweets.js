@@ -159,4 +159,19 @@ router.get("/trends", async (req, res) => {
   */
 });
 
+// Get tweets from a specific user
+router.get("/user/:username", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+
+  if (!user) {
+    return res.status(404).json({ result: false, error: "User not found" });
+  }
+
+  const tweets = await Tweet.find({ author: user._id })
+    .populate("author", "username avatar")
+    .sort({ date: -1 });
+
+  res.json({ result: true, tweets });
+});
+
 module.exports = router;
