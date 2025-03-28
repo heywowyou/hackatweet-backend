@@ -10,6 +10,8 @@ const userSchema = mongoose.Schema({
     type: String,
     default: "/oeuf.jpg",
   },
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
 });
 
 const User = mongoose.model("users", userSchema);
