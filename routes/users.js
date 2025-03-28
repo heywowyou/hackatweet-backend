@@ -115,4 +115,12 @@ router.get("/connections/:token", async (req, res) => {
   });
 });
 
+// Get user by username
+router.get("/:username", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+  if (!user)
+    return res.status(404).json({ result: false, error: "User not found" });
+  res.json({ result: true, user });
+});
+
 module.exports = router;
